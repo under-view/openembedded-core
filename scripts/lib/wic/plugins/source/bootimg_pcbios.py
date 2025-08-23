@@ -18,6 +18,7 @@ import shutil
 from glob import glob
 from wic import WicError
 from wic.engine import get_custom_config
+from wic.partition import Partition
 from wic.pluginbase import SourcePlugin
 from wic.misc import (exec_cmd, exec_native_cmd,
                       get_bitbake_var, BOOTDD_EXTRA_SPACE)
@@ -437,6 +438,7 @@ class BootimgPcbiosPlugin(SourcePlugin):
         (grub_prefix_path, grub_format, kernel_dir,
          grub_mods_path, core_img, builtin_modules)
         exec_native_cmd(grub_mkimage, native_sysroot)
+        Partition.core_img = core_img
 
         # Copy grub modules
         install_dir = '%s/%s/%s' % (hdddir, grub_prefix_path, grub_format)
@@ -481,3 +483,31 @@ class BootimgPcbiosPlugin(SourcePlugin):
         else:
             raise WicError("Unsupported partition table: %s" %
                            creator.ptable_format)
+
+# Issue GPT headers reside where core.img should be (at byte 512).
+# To navigate around issue core.img was moved to a seperate partition.
+#
+# If disk is a GPT disk caller must specify the file system
+# type as none. As no filesystem may be created. Once fstype
+# specified none core.img is then copied to the resulting
+# partition.
+#
+# As this change is specific to the 'bootimg_pcbios'
+# wics plugin no need to modify partition.py
+def install_core_img_pc(self, rootfs, cr_workdir, oe_builddir,
+                        rootfs_dir, native_sysroot, pseudo):
+    if not os.path.isfile(self.core_img):
+        raise WicError("core.img not built %s" % (self.core_img))
+
+    shutil.copy2(self.core_img, rootfs, follow_symlinks=True)
+
+    # Replicates what grub-install does to core.img
+    # when GPT based partition table format is leveraged.
+    dd_cmd = "echo -ne '\\x01\\x08' | dd of=%s conv=notrunc bs=1 count=2 seek=500" % (rootfs)
+    exec_native_cmd(dd_cmd, native_sysroot)
+
+    dd_cmd = "echo -ne '\\x2f\\x02' | dd of=%s conv=notrunc bs=1 count=2 seek=508" % (rootfs)
+    exec_native_cmd(dd_cmd, native_sysroot)
+
+Partition.core_img = ''
+Partition.prepare_rootfs_none = install_core_img_pc
