@@ -1555,6 +1555,67 @@ run_wic_cmd() {
             result = runCmd("wic ls %s:3/boot/grub/x86_64-efi -n %s" % (out[0], sysroot))
             self.assertIn('normal', result.output)
 
+    @skipIfNotArch(['x86_64'])
+    @OETestTag("runqemu")
+    def test_grub_install_biosplusefi_qemu(self):
+        """Test biosplusefi plugin grub only in qemu"""
+
+        img = "core-image-minimal"
+
+        # create a temporary file for the WKS content
+        with NamedTemporaryFile("w", suffix=".wks") as wks:
+            wks.write(
+                'part bios_boot --label bios_boot --fstype none --offset 1024 --fixed-size 1M ' \
+                '--part-type 21686148-6449-6E6F-744E-656564454649 --source bootimg_biosplusefi ' \
+                '--sourceparams="loader=grub-efi,loader-bios=grub,install-kernel-into-boot-dir=false"\n' \
+                'part efi_system --label efi_system --fstype vfat --fixed-size 48M ' \
+                '--part-type C12A7328-F81F-11D2-BA4B-00A0C93EC93B --source bootimg_biosplusefi ' \
+                '--sourceparams="loader=grub-efi,loader-bios=grub,install-kernel-into-boot-dir=false"\n' \
+                'part grub_data --label grub_data --fstype ext4 --fixed-size 78M ' \
+                '--part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --source bootimg_biosplusefi ' \
+                '--sourceparams="loader=grub-efi,loader-bios=grub,install-kernel-into-boot-dir=false"\n' \
+                'part roots --label rootfs --fstype ext4 --source rootfs ' \
+                '--part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4\n' \
+                'bootloader --timeout=1 --ptable gpt --source bootimg_biosplusefi\n'
+            )
+            wks.flush()
+
+            config = 'DEPENDS:pn-%s += "grub-native grub grub-efi ovmf"\n' % (img)
+            config += 'IMAGE_FSTYPES:pn-%s += "wic"\n' % (img)
+            #config += 'MACHINE_FEATURES:append = " efi"\n'
+            config += 'IMAGE_CLASSES += "qemuboot"\n'
+            config += 'WKS_FILE = "%s"\n' % (os.path.basename(wks.name))
+            config += 'WKS_SEARCH_PATH = "%s"\n' % (os.path.dirname(wks.name))
+
+            self.append_config(config)
+            bitbake(img)
+            self.remove_config(config)
+
+            cmd = "wic create %s -e %s -o %s" % (wks.name, img, self.resultdir)
+            runCmd(cmd)
+
+            # Test legacy bios boot
+            runqemu_params = get_bb_var('TEST_RUNQEMUPARAMS', img) or ""
+            with runqemu(img, ssh=False, runqemuparams='%s nographic' % (runqemu_params),
+                         image_fstype='wic') as qemu:
+                # Check that we have all four /dev/sda* partitions (/boot and /)
+                cmd = "grep sda. /proc/partitions | wc -l"
+                status, output = qemu.run_serial(cmd)
+                self.assertEqual(1, status, 'Failed to run command "%s": %s' % (cmd, output))
+                self.assertEqual(output, '4')
+
+            # Test UEFI boot
+            # Can't test as it requires swapping the grub-efi*.bb
+            # embedded grub config. With one that works in the
+            # hybrid boot case.
+            #with runqemu(img, ssh=False, runqemuparams='%s ovmf nographic' % (runqemu_params),
+            #             image_fstype='wic') as qemu:
+            # Check that we have all four /dev/sda* partitions (/boot and /)
+            #    cmd = "grep sda. /proc/partitions | wc -l"
+            #    status, output = qemu.run_serial(cmd)
+            #    self.assertEqual(1, status, 'Failed to run command "%s": %s' % (cmd, output))
+            #    self.assertEqual(output, '4')
+
     @skipIfNotArch(['i586', 'i686', 'x86_64', 'aarch64'])
     def test_uefi_kernel(self):
         """ Test uefi-kernel in wic """
