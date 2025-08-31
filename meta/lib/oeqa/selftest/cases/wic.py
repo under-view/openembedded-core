@@ -1501,6 +1501,60 @@ run_wic_cmd() {
             out = glob(os.path.join(self.resultdir, "%s-*.direct" % wksname))
             self.assertEqual(1, len(out))
 
+    @skipIfNotArch(['x86_64'])
+    def test_grub_install_biosplusefi(self):
+        """
+        Test the installation of the grub in hybrid boot mode.
+        """
+
+        # create a temporary file for the WKS content
+        with NamedTemporaryFile("w", suffix=".wks") as wks:
+            wks.write(
+                'part bios_boot --label bios_boot --fstype none --offset 1024 --fixed-size 1M ' \
+                '--part-type 21686148-6449-6E6F-744E-656564454649 --source bootimg_biosplusefi ' \
+                '--sourceparams="loader=grub-efi,loader-bios=grub,install-kernel-into-boot-dir=false"\n' \
+                'part efi_system --label efi_system --fstype vfat --fixed-size 48M ' \
+                '--part-type C12A7328-F81F-11D2-BA4B-00A0C93EC93B --source bootimg_biosplusefi ' \
+                '--sourceparams="loader=grub-efi,loader-bios=grub,install-kernel-into-boot-dir=false"\n' \
+                'part grub_data --label grub_data --fstype ext4 --fixed-size 78M ' \
+                '--part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --source bootimg_biosplusefi ' \
+                '--sourceparams="loader=grub-efi,loader-bios=grub,install-kernel-into-boot-dir=false"\n' \
+                'bootloader --ptable gpt --source bootimg_biosplusefi\n'
+            )
+            wks.flush()
+
+            img = "core-image-minimal"
+            config = 'DEPENDS:pn-%s += "grub-native grub grub-efi"' % (img)
+
+            self.append_config(config)
+            bitbake(img)
+            self.remove_config(config)
+
+            cmd = "wic create %s -e %s -o %s" % (wks.name, img, self.resultdir)
+            runCmd(cmd)
+
+            wksname = os.path.splitext(os.path.basename(wks.name))[0]
+            out = glob(os.path.join(self.resultdir, "%s-*.direct" % wksname))
+            self.assertEqual(1, len(out))
+
+            sysroot = get_bb_var('RECIPE_SYSROOT_NATIVE', 'wic-tools')
+
+            # Check if grub UEFI application (core.img) installed
+            result = runCmd("wic ls %s:2/EFI/BOOT -n %s" % (out[0], sysroot))
+            self.assertIn('bootx64', result.output)
+
+            # Check if grub.cfg is installed
+            result = runCmd("wic ls %s:3/boot/grub -n %s" % (out[0], sysroot))
+            self.assertIn('grub', result.output)
+
+            # Check if normal.mod is installed
+            result = runCmd("wic ls %s:3/boot/grub/i386-pc -n %s" % (out[0], sysroot))
+            self.assertIn('normal', result.output)
+
+            # Check if normal.mod is installed
+            result = runCmd("wic ls %s:3/boot/grub/x86_64-efi -n %s" % (out[0], sysroot))
+            self.assertIn('normal', result.output)
+
     @skipIfNotArch(['i586', 'i686', 'x86_64', 'aarch64'])
     def test_uefi_kernel(self):
         """ Test uefi-kernel in wic """
