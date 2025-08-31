@@ -9,6 +9,7 @@ RDEPENDS:${PN} = "grub-common virtual-grub-bootconf"
 
 SRC_URI += " \
            file://cfg \
+           file://cfg-boot-grub \
           "
 
 S = "${UNPACKDIR}/grub-${PV}"
@@ -48,6 +49,7 @@ EXTRA_OECONF += "--enable-efiemu=no"
 
 # Define GRUB_MKIMAGE_OPTS variable for additional grub-mkimage options (e.g., disabling shim lock)
 GRUB_MKIMAGE_OPTS ?= ""
+EMBEDDED_GRUB_CONFIG ?= "${UNPACKDIR}/cfg"
 
 do_mkimage() {
 	cd ${B}
@@ -63,7 +65,7 @@ do_mkimage() {
 
 	# Search for the grub.cfg on the local boot media by using the
 	# built in cfg file provided via this recipe
-	grub-mkimage -v -c ${UNPACKDIR}/cfg -p ${EFIDIR} -d ./grub-core/ \
+	grub-mkimage -v -c ${EMBEDDED_GRUB_CONFIG} -p ${EFIDIR} -d ./grub-core/ \
 	               -O ${GRUB_TARGET}-efi -o ./${GRUB_IMAGE_PREFIX}${GRUB_IMAGE} \
 	               ${GRUB_MKIMAGE_OPTS} ${GRUB_MKIMAGE_MODULES}
 }
@@ -87,7 +89,7 @@ do_install() {
 
 # To include all available modules, add 'all' to GRUB_BUILDIN
 GRUB_BUILDIN ?= "boot linux ext2 fat serial part_msdos part_gpt normal \
-                 efi_gop iso9660 configfile search loadenv test"
+                 efi_gop iso9660 configfile search probe loadenv test"
 
 # 'xen_boot' is a module valid only for aarch64
 GRUB_BUILDIN:append:aarch64 = "${@bb.utils.contains('DISTRO_FEATURES', 'xen', ' xen_boot', '', d)}"
