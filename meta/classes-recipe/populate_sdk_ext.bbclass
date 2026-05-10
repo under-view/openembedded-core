@@ -796,6 +796,8 @@ def generate_nativesdk_lockedsigs(d):
 def get_ext_sdk_depends(d):
     # Note: the deps varflag is a list not a string, so we need to specify expand=False
     deps = d.getVarFlag('do_image_complete', 'deps', False)
+    if not deps:
+        return ''
     pn = d.getVar('PN')
     deplist = ['%s:%s' % (pn, dep) for dep in deps]
     tasklist = bb.build.tasksbetween('do_image_complete', 'do_build', d)
