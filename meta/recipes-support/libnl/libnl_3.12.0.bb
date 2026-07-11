@@ -54,7 +54,7 @@ RREPLACES:${PN}-genl = "libnl-genl2"
 RCONFLICTS:${PN}-genl = "libnl-genl2"
 
 DEPENDS += "${@bb.utils.contains('PTEST_ENABLED', '1', 'libcheck', '', d)}"
-RRECOMMENDS:${PN}-ptest += "kernel-module-dummy kernel-module-bonding"
+RRECOMMENDS:${PN}-ptest += "${KERNEL_PACKAGE_NAME}-module-dummy ${KERNEL_PACKAGE_NAME}-module-bonding"
 RDEPENDS:${PN}-ptest += "iproute2-ip"
 
 do_compile_ptest() {
