@@ -28,6 +28,6 @@ do_install() {
 
 BBCLASSEXTEND = "native"
 
-RRECOMMENDS:${PN}:class-target = "kernel-module-efivarfs"
+RRECOMMENDS:${PN}:class-target = "${KERNEL_PACKAGE_NAME}-module-efivarfs"
 
 CLEANBROKEN = "1"
