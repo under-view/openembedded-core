@@ -92,18 +92,18 @@ python populate_packages:prepend() {
 RDEPENDS:${PN} = "${PN}-module-xt-standard"
 RRECOMMENDS:${PN} = " \
     ${PN}-modules \
-    kernel-module-x-tables \
-    kernel-module-ip-tables \
-    kernel-module-iptable-filter \
-    kernel-module-iptable-nat \
-    kernel-module-nf-defrag-ipv4 \
-    kernel-module-nf-conntrack \
-    kernel-module-nf-conntrack-ipv4 \
-    kernel-module-nf-nat \
-    kernel-module-ipt-masquerade \
+    ${KERNEL_PACKAGE_NAME}-module-x-tables \
+    ${KERNEL_PACKAGE_NAME}-module-ip-tables \
+    ${KERNEL_PACKAGE_NAME}-module-iptable-filter \
+    ${KERNEL_PACKAGE_NAME}-module-iptable-nat \
+    ${KERNEL_PACKAGE_NAME}-module-nf-defrag-ipv4 \
+    ${KERNEL_PACKAGE_NAME}-module-nf-conntrack \
+    ${KERNEL_PACKAGE_NAME}-module-nf-conntrack-ipv4 \
+    ${KERNEL_PACKAGE_NAME}-module-nf-nat \
+    ${KERNEL_PACKAGE_NAME}-module-ipt-masquerade \
     ${@bb.utils.contains('PACKAGECONFIG', 'ipv6', '\
-        kernel-module-ip6table-filter \
-        kernel-module-ip6-tables \
+        ${KERNEL_PACKAGE_NAME}-module-ip6table-filter \
+        ${KERNEL_PACKAGE_NAME}-module-ip6-tables \
     ', '', d)} \
 "
 
