@@ -65,8 +65,8 @@ FILES:${PN}-keepalive = " \
 "
 
 RDEPENDS:${PN} += "${PN}-config"
-RRECOMMENDS:${PN} += "kernel-module-softdog"
+RRECOMMENDS:${PN} += "${KERNEL_PACKAGE_NAME}-module-softdog"
 
 RDEPENDS:${PN}-keepalive += "${PN}-config"
 RCONFLICTS:${PN}-keepalive += "${PN}"
-RRECOMMENDS:${PN}-keepalive += "kernel-module-softdog"
+RRECOMMENDS:${PN}-keepalive += "${KERNEL_PACKAGE_NAME}-module-softdog"
