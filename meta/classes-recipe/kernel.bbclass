@@ -15,7 +15,6 @@ COMPATIBLE_HOST = ".*-linux"
 REQUIRED_TUNE_FEATURES:riscv32 = "rv 32 i m a zicsr zifencei"
 REQUIRED_TUNE_FEATURES:riscv64 = "rv 64 i m a zicsr zifencei"
 
-KERNEL_PACKAGE_NAME ??= "kernel"
 KERNEL_DEPLOYSUBDIR ??= "${@ "" if (d.getVar("KERNEL_PACKAGE_NAME") == "kernel") else d.getVar("KERNEL_PACKAGE_NAME") }"
 
 PROVIDES += "virtual/kernel"
@@ -69,18 +68,6 @@ python __anonymous () {
     if kpn == pn:
         bb.warn("Some packages (E.g. *-dev) might be missing due to "
                 "bug 11905 (variable KERNEL_PACKAGE_NAME == PN)")
-
-    # The default kernel recipe builds in a shared location defined by
-    # bitbake/distro confs: STAGING_KERNEL_DIR and STAGING_KERNEL_BUILDDIR.
-    # Set these variables to directories under ${WORKDIR} in alternate
-    # kernel recipes (I.e. where KERNEL_PACKAGE_NAME != kernel) so that they
-    # may build in parallel with the default kernel without clobbering.
-    if kpn != "kernel":
-        workdir = d.getVar("WORKDIR")
-        sourceDir = os.path.join(workdir, 'kernel-source')
-        artifactsDir = os.path.join(workdir, 'kernel-build-artifacts')
-        d.setVar("STAGING_KERNEL_DIR", sourceDir)
-        d.setVar("STAGING_KERNEL_BUILDDIR", artifactsDir)
 
     # Merge KERNEL_IMAGETYPE and KERNEL_ALT_IMAGETYPE into KERNEL_IMAGETYPES
     type = d.getVar('KERNEL_IMAGETYPE') or ""
