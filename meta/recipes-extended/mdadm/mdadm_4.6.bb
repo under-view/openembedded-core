@@ -85,12 +85,12 @@ RDEPENDS:${PN}-ptest += " \
 "
 RRECOMMENDS:${PN}-ptest += " \
     coreutils \
-    kernel-module-loop \
-    kernel-module-linear \
-    kernel-module-raid0 \
-    kernel-module-raid1 \
-    kernel-module-raid10 \
-    kernel-module-raid456 \
+    ${KERNEL_PACKAGE_NAME}-module-loop \
+    ${KERNEL_PACKAGE_NAME}-module-linear \
+    ${KERNEL_PACKAGE_NAME}-module-raid0 \
+    ${KERNEL_PACKAGE_NAME}-module-raid1 \
+    ${KERNEL_PACKAGE_NAME}-module-raid10 \
+    ${KERNEL_PACKAGE_NAME}-module-raid456 \
 "
 
 FILES:${PN} += "${systemd_unitdir}/*"
