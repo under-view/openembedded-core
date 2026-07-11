@@ -483,7 +483,7 @@ FILES:${PN}-binfmt = "${sysconfdir}/binfmt.d/ \
                       ${nonarch_libdir}/systemd/systemd-binfmt \
                       ${systemd_system_unitdir}/proc-sys-fs-binfmt_misc.* \
                       ${systemd_system_unitdir}/systemd-binfmt.service"
-RRECOMMENDS:${PN}-binfmt = "${@bb.utils.contains('PACKAGECONFIG', 'binfmt', 'kernel-module-binfmt-misc', '', d)}"
+RRECOMMENDS:${PN}-binfmt = "${@bb.utils.contains('PACKAGECONFIG', 'binfmt', '${KERNEL_PACKAGE_NAME}-module-binfmt-misc', '', d)}"
 
 RDEPENDS:${PN}-vconsole-setup = "${@bb.utils.contains('PACKAGECONFIG', 'vconsole', 'kbd kbd-consolefonts kbd-keymaps', '', d)}"
 
@@ -561,9 +561,9 @@ RRECOMMENDS:${PN}-container += "\
                          ${PN}-journal-gatewayd \
                          ${PN}-journal-remote \
                          ${PN}-journal-upload \
-                         kernel-module-dm-mod \
-                         kernel-module-loop \
-                         kernel-module-tun \
+                         ${KERNEL_PACKAGE_NAME}-module-dm-mod \
+                         ${KERNEL_PACKAGE_NAME}-module-loop \
+                         ${KERNEL_PACKAGE_NAME}-module-tun \
                          tar \
                         "
 
@@ -749,7 +749,10 @@ RDEPENDS:${PN} += "volatile-binds"
 RRECOMMENDS:${PN} += "${PN}-extra-utils \
                       udev-hwdb \
                       e2fsprogs-e2fsck \
-                      kernel-module-autofs4 kernel-module-unix kernel-module-ipv6 kernel-module-sch-fq-codel \
+                      ${KERNEL_PACKAGE_NAME}-module-autofs4 \
+                      ${KERNEL_PACKAGE_NAME}-module-unix \
+                      ${KERNEL_PACKAGE_NAME}-module-ipv6 \
+                      ${KERNEL_PACKAGE_NAME}-module-sch-fq-codel \
                       os-release \
                       systemd-conf \
                       ${@bb.utils.contains('PACKAGECONFIG', 'logind', 'pam-plugin-umask', '', d)} \
