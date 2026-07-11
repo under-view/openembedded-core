@@ -73,13 +73,13 @@ RDEPENDS:packagegroup-base = "\
     "
 
 RRECOMMENDS:packagegroup-base = "\
-    kernel-module-nls-utf8 \
-    kernel-module-input \
-    kernel-module-uinput \
-    kernel-module-rtc-dev \
-    kernel-module-rtc-proc \
-    kernel-module-rtc-sysfs \
-    kernel-module-unix"
+    ${KERNEL_PACKAGE_NAME}-module-nls-utf8 \
+    ${KERNEL_PACKAGE_NAME}-module-input \
+    ${KERNEL_PACKAGE_NAME}-module-uinput \
+    ${KERNEL_PACKAGE_NAME}-module-rtc-dev \
+    ${KERNEL_PACKAGE_NAME}-module-rtc-proc \
+    ${KERNEL_PACKAGE_NAME}-module-rtc-sysfs \
+    ${KERNEL_PACKAGE_NAME}-module-unix"
 
 RDEPENDS:packagegroup-base-extended = "\
     packagegroup-base \
@@ -152,10 +152,10 @@ RRECOMMENDS:packagegroup-base-ext2 = "\
 
 SUMMARY:packagegroup-base-vfat = "FAT filesystem support"
 RRECOMMENDS:packagegroup-base-vfat = "\
-    kernel-module-msdos \
-    kernel-module-vfat \
-    kernel-module-nls-iso8859-1 \
-    kernel-module-nls-cp437 \
+    ${KERNEL_PACKAGE_NAME}-module-msdos \
+    ${KERNEL_PACKAGE_NAME}-module-vfat \
+    ${KERNEL_PACKAGE_NAME}-module-nls-iso8859-1 \
+    ${KERNEL_PACKAGE_NAME}-module-nls-cp437 \
     dosfstools"
 
 SUMMARY:packagegroup-base-alsa = "ALSA sound support"
@@ -165,8 +165,8 @@ RDEPENDS:packagegroup-base-alsa = "\
     ${VIRTUAL-RUNTIME_alsa-state}"
 
 RRECOMMENDS:packagegroup-base-alsa = "\
-    kernel-module-snd-mixer-oss \
-    kernel-module-snd-pcm-oss"
+    ${KERNEL_PACKAGE_NAME}-module-snd-mixer-oss \
+    ${KERNEL_PACKAGE_NAME}-module-snd-pcm-oss"
 
 SUMMARY:packagegroup-base-pcmcia = "PC card slot support"
 RDEPENDS:packagegroup-base-pcmcia = "\
@@ -174,15 +174,15 @@ RDEPENDS:packagegroup-base-pcmcia = "\
     "
 
 RRECOMMENDS:packagegroup-base-pcmcia = "\
-    kernel-module-pcmcia \
-    kernel-module-airo-cs \
-    kernel-module-pcnet-cs \
-    kernel-module-serial-cs \
-    kernel-module-ide-cs \
-    kernel-module-ide-disk \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'kernel-module-hostap-cs', '',d)} \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'kernel-module-orinoco-cs', '',d)} \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'kernel-module-spectrum-cs', '',d)}"
+    ${KERNEL_PACKAGE_NAME}-module-pcmcia \
+    ${KERNEL_PACKAGE_NAME}-module-airo-cs \
+    ${KERNEL_PACKAGE_NAME}-module-pcnet-cs \
+    ${KERNEL_PACKAGE_NAME}-module-serial-cs \
+    ${KERNEL_PACKAGE_NAME}-module-ide-cs \
+    ${KERNEL_PACKAGE_NAME}-module-ide-disk \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', '${KERNEL_PACKAGE_NAME}-module-hostap-cs', '',d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', '${KERNEL_PACKAGE_NAME}-module-orinoco-cs', '',d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', '${KERNEL_PACKAGE_NAME}-module-spectrum-cs', '',d)}"
 
 SUMMARY:packagegroup-base-bluetooth = "Bluetooth support"
 RDEPENDS:packagegroup-base-bluetooth = "\
@@ -190,46 +190,46 @@ RDEPENDS:packagegroup-base-bluetooth = "\
     "
 
 RRECOMMENDS:packagegroup-base-bluetooth = "\
-    kernel-module-bluetooth \
-    kernel-module-l2cap \
-    kernel-module-rfcomm \
-    kernel-module-hci-vhci \
-    kernel-module-bnep \
-    kernel-module-hidp \
-    kernel-module-hci-uart \
-    kernel-module-sco \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'usbhost', 'kernel-module-hci-usb', '',d)} \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'pcmcia', 'kernel-module-bluetooth3c-cs', '',d)} \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'pcmcia', 'kernel-module-bluecard-cs', '',d)} \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'pcmcia', 'kernel-module-bluetoothuart-cs', '',d)} \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'pcmcia', 'kernel-module-dtl1-cs', '',d)} \
+    ${KERNEL_PACKAGE_NAME}-module-bluetooth \
+    ${KERNEL_PACKAGE_NAME}-module-l2cap \
+    ${KERNEL_PACKAGE_NAME}-module-rfcomm \
+    ${KERNEL_PACKAGE_NAME}-module-hci-vhci \
+    ${KERNEL_PACKAGE_NAME}-module-bnep \
+    ${KERNEL_PACKAGE_NAME}-module-hidp \
+    ${KERNEL_PACKAGE_NAME}-module-hci-uart \
+    ${KERNEL_PACKAGE_NAME}-module-sco \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'usbhost', '${KERNEL_PACKAGE_NAME}-module-hci-usb', '',d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'pcmcia', '${KERNEL_PACKAGE_NAME}-module-bluetooth3c-cs', '',d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'pcmcia', '${KERNEL_PACKAGE_NAME}-module-bluecard-cs', '',d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'pcmcia', '${KERNEL_PACKAGE_NAME}-module-bluetoothuart-cs', '',d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'pcmcia', '${KERNEL_PACKAGE_NAME}-module-dtl1-cs', '',d)} \
     "
 
 SUMMARY:packagegroup-base-usbgadget = "USB gadget support"
 RRECOMMENDS:packagegroup-base-usbgadget = "\
-    kernel-module-pxa27x_udc \
-    kernel-module-gadgetfs \
-    kernel-module-g-file-storage \
-    kernel-module-g-serial \
-    kernel-module-g-ether"
+    ${KERNEL_PACKAGE_NAME}-module-pxa27x_udc \
+    ${KERNEL_PACKAGE_NAME}-module-gadgetfs \
+    ${KERNEL_PACKAGE_NAME}-module-g-file-storage \
+    ${KERNEL_PACKAGE_NAME}-module-g-serial \
+    ${KERNEL_PACKAGE_NAME}-module-g-ether"
 
 SUMMARY:packagegroup-base-usbhost = "USB host support"
 RDEPENDS:packagegroup-base-usbhost = "\
     usbutils "
 
 RRECOMMENDS:packagegroup-base-usbhost = "\
-    kernel-module-uhci-hcd \
-    kernel-module-ohci-hcd \
-    kernel-module-ehci-hcd \
-    kernel-module-usbcore \
-    kernel-module-usbhid \
-    kernel-module-usbnet \
-    kernel-module-sd-mod \
-    kernel-module-scsi-mod \
-    kernel-module-usbmouse \
-    kernel-module-mousedev \
-    kernel-module-usbserial \
-    kernel-module-usb-storage "
+    ${KERNEL_PACKAGE_NAME}-module-uhci-hcd \
+    ${KERNEL_PACKAGE_NAME}-module-ohci-hcd \
+    ${KERNEL_PACKAGE_NAME}-module-ehci-hcd \
+    ${KERNEL_PACKAGE_NAME}-module-usbcore \
+    ${KERNEL_PACKAGE_NAME}-module-usbhid \
+    ${KERNEL_PACKAGE_NAME}-module-usbnet \
+    ${KERNEL_PACKAGE_NAME}-module-sd-mod \
+    ${KERNEL_PACKAGE_NAME}-module-scsi-mod \
+    ${KERNEL_PACKAGE_NAME}-module-usbmouse \
+    ${KERNEL_PACKAGE_NAME}-module-mousedev \
+    ${KERNEL_PACKAGE_NAME}-module-usbserial \
+    ${KERNEL_PACKAGE_NAME}-module-usb-storage "
 
 SUMMARY:packagegroup-base-ppp = "PPP dial-up protocol support"
 RDEPENDS:packagegroup-base-ppp = "\
@@ -237,18 +237,18 @@ RDEPENDS:packagegroup-base-ppp = "\
     ppp-dialin"
 
 RRECOMMENDS:packagegroup-base-ppp = "\
-    kernel-module-ppp-async \
-    kernel-module-ppp-deflate \
-    kernel-module-ppp-generic \
-    kernel-module-ppp-mppe \
-    kernel-module-slhc"
+    ${KERNEL_PACKAGE_NAME}-module-ppp-async \
+    ${KERNEL_PACKAGE_NAME}-module-ppp-deflate \
+    ${KERNEL_PACKAGE_NAME}-module-ppp-generic \
+    ${KERNEL_PACKAGE_NAME}-module-ppp-mppe \
+    ${KERNEL_PACKAGE_NAME}-module-slhc"
 
 SUMMARY:packagegroup-base-ipsec = "IPSEC support"
 RDEPENDS:packagegroup-base-ipsec = "\
     "
 
 RRECOMMENDS:packagegroup-base-ipsec = "\
-    kernel-module-ipsec"
+    ${KERNEL_PACKAGE_NAME}-module-ipsec"
 
 #
 # packagegroup-base-wifi contain everything needed to get WiFi working
@@ -264,42 +264,42 @@ RDEPENDS:packagegroup-base-wifi = "\
 "
 
 RRECOMMENDS:packagegroup-base-wifi = "\
-    ${@bb.utils.contains('MACHINE_FEATURES', 'usbhost', 'kernel-module-zd1211rw', '',d)} \
-    kernel-module-ieee80211-crypt \
-    kernel-module-ieee80211-crypt-ccmp \
-    kernel-module-ieee80211-crypt-tkip \
-    kernel-module-ieee80211-crypt-wep \
-    kernel-module-ecb \
-    kernel-module-arc4 \
-    kernel-module-crypto_algapi \
-    kernel-module-cryptomgr \
-    kernel-module-michael-mic \
-    kernel-module-aes-generic \
-    kernel-module-aes"
+    ${@bb.utils.contains('MACHINE_FEATURES', 'usbhost', '${KERNEL_PACKAGE_NAME}-module-zd1211rw', '',d)} \
+    ${KERNEL_PACKAGE_NAME}-module-ieee80211-crypt \
+    ${KERNEL_PACKAGE_NAME}-module-ieee80211-crypt-ccmp \
+    ${KERNEL_PACKAGE_NAME}-module-ieee80211-crypt-tkip \
+    ${KERNEL_PACKAGE_NAME}-module-ieee80211-crypt-wep \
+    ${KERNEL_PACKAGE_NAME}-module-ecb \
+    ${KERNEL_PACKAGE_NAME}-module-arc4 \
+    ${KERNEL_PACKAGE_NAME}-module-crypto_algapi \
+    ${KERNEL_PACKAGE_NAME}-module-cryptomgr \
+    ${KERNEL_PACKAGE_NAME}-module-michael-mic \
+    ${KERNEL_PACKAGE_NAME}-module-aes-generic \
+    ${KERNEL_PACKAGE_NAME}-module-aes"
 
 SUMMARY:packagegroup-base-nfc = "Near Field Communication support"
 RDEPENDS:packagegroup-base-nfc = "\
     neard"
 
 RRECOMMENDS:packagegroup-base-nfc = "\
-    kernel-module-nfc"
+    ${KERNEL_PACKAGE_NAME}-module-nfc"
 
 SUMMARY:packagegroup-base-3g = "Cellular data support"
 RDEPENDS:packagegroup-base-3g = "\
     ofono"
 
 RRECOMMENDS:packagegroup-base-3g = "\
-    kernel-module-cdc-acm \
-    kernel-module-cdc-wdm"
+    ${KERNEL_PACKAGE_NAME}-module-cdc-acm \
+    ${KERNEL_PACKAGE_NAME}-module-cdc-wdm"
 
 SUMMARY:packagegroup-base-smbfs = "SMB network filesystem support"
 RRECOMMENDS:packagegroup-base-smbfs = "\
-    kernel-module-cifs \
-    kernel-module-smbfs"
+    ${KERNEL_PACKAGE_NAME}-module-cifs \
+    ${KERNEL_PACKAGE_NAME}-module-smbfs"
 
 SUMMARY:packagegroup-base-cramfs = "cramfs filesystem support"
 RRECOMMENDS:packagegroup-base-cramfs = "\
-    kernel-module-cramfs"
+    ${KERNEL_PACKAGE_NAME}-module-cramfs"
 
 #
 # packagegroup-base-nfs provides ONLY client support - server is in nfs-utils package
@@ -309,7 +309,7 @@ RDEPENDS:packagegroup-base-nfs = "\
     rpcbind"
 
 RRECOMMENDS:packagegroup-base-nfs = "\
-    kernel-module-nfs "
+    ${KERNEL_PACKAGE_NAME}-module-nfs "
 
 SUMMARY:packagegroup-base-zeroconf = "Zeroconf support"
 RDEPENDS:packagegroup-base-zeroconf = "\
@@ -323,7 +323,7 @@ RDEPENDS:packagegroup-base-ipv6 = "\
     "
 
 RRECOMMENDS:packagegroup-base-ipv6 = "\
-    kernel-module-ipv6 "
+    ${KERNEL_PACKAGE_NAME}-module-ipv6 "
 
 SUMMARY:packagegroup-base-serial = "Serial port support"
 RDEPENDS:packagegroup-base-serial = "\
