@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=95f3a93a5c3c7888de623b46ea085a84"
 # util-linux for libblkid
 DEPENDS = "libcap libevent util-linux sqlite3 libtirpc libxml2 libnl"
 RDEPENDS:${PN} = "netbase ${PN}-client"
-RRECOMMENDS:${PN} = "kernel-module-nfsd"
+RRECOMMENDS:${PN} = "${KERNEL_PACKAGE_NAME}-module-nfsd"
 
 inherit useradd
 
@@ -28,7 +28,7 @@ SRC_URI = "${KERNELORG_MIRROR}/linux/utils/nfs-utils/${PV}/nfs-utils-${PV}.tar.x
 
 SRC_URI[sha256sum] = "302846343bf509f8f884c23bdbd0fe853b7f7cbb6572060a9082279d13b21a2c"
 
-# Only kernel-module-nfsd is required here (but can be built-in)  - the nfsd module will
+# Only ${KERNEL_PACKAGE_NAME}-module-nfsd is required here (but can be built-in)  - the nfsd module will
 # pull in the remainder of the dependencies.
 
 INITSCRIPT_PACKAGES = "${PN} ${PN}-client"
