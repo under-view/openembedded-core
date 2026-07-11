@@ -7,7 +7,7 @@ DESCRIPTION = "Packages required to run the build system"
 
 PACKAGE_ARCH = "${TUNE_PKGARCH}"
 
-inherit packagegroup  features_check
+inherit packagegroup features_check
 # rdepends on libx11-dev
 REQUIRED_DISTRO_FEATURES = "x11"
 
@@ -51,12 +51,12 @@ PSEUDO = "pseudo"
 PSEUDO:libc-musl = ""
 
 RRECOMMENDS:packagegroup-self-hosted-host-tools = "\
-    kernel-module-tun \
-    kernel-module-iptable-raw \
-    kernel-module-iptable-nat \
-    kernel-module-iptable-mangle \
-    kernel-module-iptable-filter \
-	"
+    ${KERNEL_PACKAGE_NAME}-module-tun \
+    ${KERNEL_PACKAGE_NAME}-module-iptable-raw \
+    ${KERNEL_PACKAGE_NAME}-module-iptable-nat \
+    ${KERNEL_PACKAGE_NAME}-module-iptable-mangle \
+    ${KERNEL_PACKAGE_NAME}-module-iptable-filter \
+    "
 
 RDEPENDS:packagegroup-self-hosted-sdk = "\
     autoconf \
