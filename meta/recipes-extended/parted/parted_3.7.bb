@@ -52,7 +52,7 @@ do_install_ptest() {
 }
 
 RDEPENDS:${PN}-ptest = "bash coreutils perl util-linux-losetup util-linux-mkswap python3 make gawk e2fsprogs-mke2fs e2fsprogs-tune2fs python3-core dosfstools"
-RRECOMMENDS:${PN}-ptest += "kernel-module-scsi-debug kernel-module-loop kernel-module-vfat"
+RRECOMMENDS:${PN}-ptest += "${KERNEL_PACKAGE_NAME}-module-scsi-debug ${KERNEL_PACKAGE_NAME}-module-loop ${KERNEL_PACKAGE_NAME}-module-vfat"
 RDEPENDS:${PN}-ptest:append:libc-glibc = "\
         glibc-utils \
         locale-base-en-us \
