@@ -15,7 +15,7 @@ IMAGE_FSTYPES += "ext4 wic.qcow2"
 
 WKS_FILE ?= "qemuloongarch.wks"
 
-MACHINE_EXTRA_RRECOMMENDS += " kernel-modules"
+MACHINE_EXTRA_RRECOMMENDS += "${KERNEL_PACKAGE_NAME}-modules"
 
 #EXTRA_IMAGEDEPENDS += "opensbi"
 

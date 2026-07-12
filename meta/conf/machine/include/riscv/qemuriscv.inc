@@ -15,7 +15,7 @@ IMAGE_FSTYPES += "ext4.zst wic.qcow2"
 
 WKS_FILE ?= "qemuriscv.wks"
 
-MACHINE_EXTRA_RRECOMMENDS += " kernel-modules"
+MACHINE_EXTRA_RRECOMMENDS += "${KERNEL_PACKAGE_NAME}-modules"
 
 EXTRA_IMAGEDEPENDS += "opensbi"
 RISCV_SBI_PLAT ?= "generic"
