@@ -12,4 +12,4 @@ UBOOT_ARCH = "${@oe.kernel.map_uboot_arch(d)}"
 
 # Set the version of this recipe to the version of the included kernel
 # (without taking the long way around via PV)
-PKGV = "${@oe.kernel.get_version_file("${STAGING_KERNEL_BUILDDIR}")}"
+PKGV = "${@oe.kernel.get_version_file("${STAGING_KERNEL_BUILDDIR}", "${KERNEL_PACKAGE_NAME}")}"
