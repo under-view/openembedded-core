@@ -30,8 +30,8 @@ def get_kernelversion_headers(p):
     return None
 
 
-def get_kernelversion_file(p):
-    fn = p + '/kernel-abiversion'
+def get_kernelversion_file(p, kpn):
+    fn = '%s/%s-abiversion' % (p, kpn)
 
     try:
         with open(fn, 'r') as f:
@@ -39,8 +39,8 @@ def get_kernelversion_file(p):
     except IOError:
         return None
 
-def get_kernellocalversion_file(p):
-    fn = p + '/kernel-localversion'
+def get_kernellocalversion_file(p, kpn):
+    fn = '%s/%s-localversion' % (p, kpn)
 
     try:
         with open(fn, 'r') as f:
@@ -50,9 +50,9 @@ def get_kernellocalversion_file(p):
 
     return ""
 
-def linux_module_packages(s, d):
+def linux_module_packages(s, pkn):
     suffix = ""
-    return " ".join(map(lambda s: "kernel-module-%s%s" % (s.lower().replace('_', '-').replace('@', '+'), suffix), s.split()))
+    return " ".join(map(lambda s: "%s-module-%s%s" % (kpn, s.lower().replace('_', '-').replace('@', '+'), suffix), s.split()))
 
 export KBUILD_BUILD_VERSION = "1"
 export KBUILD_BUILD_USER ?= "oe-user"
