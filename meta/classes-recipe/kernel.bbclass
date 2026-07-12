@@ -95,7 +95,10 @@ python __anonymous () {
 
         d.setVar('KERNEL_IMAGETYPE_FOR_MAKE', ' '.join(sorted(typeformake)))
 
-    kname = d.getVar('KERNEL_PACKAGE_NAME') or "kernel"
+    kname = d.getVar('KERNEL_PACKAGE_NAME')
+    if not kname:
+        bb.error("KERNEL_PACKAGE_NAME is somehow not defined.")
+
     imagedest = d.getVar('KERNEL_IMAGEDEST')
 
     for type in types.split():
