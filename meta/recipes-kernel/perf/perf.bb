@@ -98,6 +98,15 @@ TARGET_CC_ARCH += "${SELECTED_OPTIMIZATION} ${DEBUG_PREFIX_MAP}"
 #| cc1: all warnings being treated as errors
 TARGET_CC_ARCH:append:toolchain-clang:arm = " -fno-error=maybe-uninitialized"
 
+#| libbpf.c: In function 'kallsyms_cb':
+#| libbpf.c:8120:13: error: assignment discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+#|  8120 |         res = strstr(sym_name, ".llvm.");
+#|       |             ^
+#| libbpf.c: In function 'resolve_full_path':
+#| libbpf.c:11920:35: error: assignment discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+#| 11920 |                         next_path = strchr(s, ':');
+TARGET_CC_ARCH:append = " -Wno-error=discarded-qualifiers"
+
 EXTRA_OEMAKE = '\
     V=1 \
     VF=1 \
