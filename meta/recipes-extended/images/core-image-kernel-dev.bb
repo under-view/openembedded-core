@@ -6,7 +6,7 @@ require recipes-core/images/core-image-minimal.bb
 
 KERNEL_DEV_UTILS ?= "dropbear connman"
 KERNEL_DEV_TOOLS ?= "packagegroup-core-tools-profile packagegroup-core-buildessential kernel-devsrc"
-KERNEL_DEV_MODULE ?= "kernel-modules"
+KERNEL_DEV_MODULE ?= "${KERNEL_PACKAGE_NAME}-modules"
 
 CORE_IMAGE_EXTRA_INSTALL += "${KERNEL_DEV_MODULE} \
                              ${KERNEL_DEV_UTILS} \
