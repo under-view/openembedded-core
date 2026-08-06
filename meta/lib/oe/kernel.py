@@ -78,8 +78,8 @@ def get_version_headers(p):
     return None
 
 
-def get_version_file(p):
-    fn = p + '/kernel-abiversion'
+def get_version_file(p, kpn):
+    fn = '%s/%s-abiversion' % (p, kpn)
 
     try:
         with open(fn, 'r') as f:
@@ -87,8 +87,8 @@ def get_version_file(p):
     except IOError:
         return None
 
-def get_localversion_file(p):
-    fn = p + '/kernel-localversion'
+def get_localversion_file(p, kpn):
+    fn = '%s/%s-localversion' % (p, kpn)
 
     try:
         with open(fn, 'r') as f:
