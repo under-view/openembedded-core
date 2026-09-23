@@ -61,13 +61,14 @@ KERNEL_VERSION_PKG_NAME[vardepvalue] = "${LINUX_VERSION}"
 
 python __anonymous () {
     pn = d.getVar("PN")
+    epkgv = d.getVar("EXTENDPKGV")
+    ksrc = d.getVar("KERNEL_SRC_PATH")
+    kdest = d.getVar("KERNEL_IMAGEDEST")
     kpn = d.getVar("KERNEL_PACKAGE_NAME")
-
-    # XXX Remove this after bug 11905 is resolved
-    #  FILES:${KERNEL_PACKAGE_NAME}-dev doesn't expand correctly
-    if kpn == pn:
-        bb.warn("Some packages (E.g. *-dev) might be missing due to "
-                "bug 11905 (variable KERNEL_PACKAGE_NAME == PN)")
+    kversion = d.getVar("KERNEL_VERSION")
+    kversion_name = d.getVar("KERNEL_VERSION_NAME")
+    kversion_pn = d.getVar("KERNEL_VERSION_PKG_NAME")
+    kprefix = d.getVar("KERNEL_MODULE_INSTALL_PREFIX")
 
     # Merge KERNEL_IMAGETYPE and KERNEL_ALT_IMAGETYPE into KERNEL_IMAGETYPES
     type = d.getVar('KERNEL_IMAGETYPE') or ""
@@ -78,6 +79,33 @@ python __anonymous () {
     if alttype not in types.split():
         types = (alttype + ' ' + types).strip()
     d.setVar('KERNEL_IMAGETYPES', types)
+
+    # kernel-base becomes kernel-${KERNEL_VERSION}
+    # kernel-image becomes kernel-image-${KERNEL_VERSION}
+    d.setVar('PACKAGES', '%s %s-dev %s-base %s-vmlinux %s-image %s-modules %s-dbg' % (kpn, kpn, kpn, kpn, kpn, kpn, kpn))
+    d.setVar('FILES:%s' % pn, '')
+    d.setVar('FILES:%s-base' % kpn, '%s/modules.order %s/modules.builtin %s/modules.builtin.modinfo' % (kprefix, kprefix, kprefix))
+    d.setVar('FILES:%s-image' % kpn, '')
+    d.setVar('FILES:%s-dev' % kpn, '/%s/System.map* /%s/Module.symvers* /%s/config* %s %s/build' % (kdest, kdest, kdest, ksrc, kprefix))
+    d.setVar('FILES:%s-vmlinux' % kpn, '/%s/vmlinux-%s' % (kdest, kversion_name))
+    d.setVar('FILES:%s-modules' % kpn, '')
+    d.setVar('FILES:%s-dbg' % kpn, '/usr/lib/debug /usr/src/debug')
+    d.setVar('RDEPENDS:%s' % kpn, '%s-base (= %s)' % (kpn, epkgv))
+
+    # Allow machines to override this dependency if kernel image files are
+    # not wanted in images as standard
+    d.setVar('RRECOMMENDS:%s-base' % kpn, '%s-image (= %s)' % (kpn, epkgv))
+    d.setVar('PKG:%s-image' % kpn, '%s-image-%s' % (kpn, kversion_pn))
+    d.appendVar('RPROVIDES:%s-image', '%s-image' % kpn)
+    kpn_image_rdepends = oe.utils.conditional('KERNEL_IMAGETYPE', 'vmlinux', '%s-vmlinux (= %s)' % (kpn, epkgv), '', d)
+    d.appendVar('RDEPENDS:%s-image', kpn_image_rdepends)
+    d.setVar('PKG:%s-base' % kpn, '%s-image-%s' % (kpn, kversion_pn))
+    d.appendVar('RPROVIDES:%s-base', '%s-%s %s-base' % (kpn, kversion, kpn))
+    d.setVar('ALLOW_EMPTY:%s' % kpn, '1')
+    d.setVar('ALLOW_EMPTY:%s-base' % kpn, '1')
+    d.setVar('ALLOW_EMPTY:%s-image' % kpn, '1')
+    d.setVar('ALLOW_EMPTY:%s-modules' % kpn, '1')
+    d.setVar('DESCRIPTION:%s-modules' % kpn, 'Kernel modules meta package')
 
     # Since kernel-fitimage.bbclass got replaced by kernel-fit-image.bbclass
     if "fitImage" in types:
@@ -665,31 +693,6 @@ kernel_do_configure() {
 }
 
 EXPORT_FUNCTIONS do_compile do_transform_kernel do_transform_bundled_initramfs do_install do_configure
-
-# kernel-base becomes kernel-${KERNEL_VERSION}
-# kernel-image becomes kernel-image-${KERNEL_VERSION}
-PACKAGES = "${KERNEL_PACKAGE_NAME} ${KERNEL_PACKAGE_NAME}-base ${KERNEL_PACKAGE_NAME}-vmlinux ${KERNEL_PACKAGE_NAME}-image ${KERNEL_PACKAGE_NAME}-dev ${KERNEL_PACKAGE_NAME}-modules ${KERNEL_PACKAGE_NAME}-dbg"
-FILES:${PN} = ""
-FILES:${KERNEL_PACKAGE_NAME}-base = "${KERNEL_MODULE_INSTALL_PREFIX}/modules.order ${KERNEL_MODULE_INSTALL_PREFIX}/modules.builtin ${KERNEL_MODULE_INSTALL_PREFIX}/modules.builtin.modinfo"
-FILES:${KERNEL_PACKAGE_NAME}-image = ""
-FILES:${KERNEL_PACKAGE_NAME}-dev = "/${KERNEL_IMAGEDEST}/System.map* /${KERNEL_IMAGEDEST}/Module.symvers* /${KERNEL_IMAGEDEST}/config* ${KERNEL_SRC_PATH} ${KERNEL_MODULE_INSTALL_PREFIX}/build"
-FILES:${KERNEL_PACKAGE_NAME}-vmlinux = "/${KERNEL_IMAGEDEST}/vmlinux-${KERNEL_VERSION_NAME}"
-FILES:${KERNEL_PACKAGE_NAME}-modules = ""
-FILES:${KERNEL_PACKAGE_NAME}-dbg = "/usr/lib/debug /usr/src/debug"
-RDEPENDS:${KERNEL_PACKAGE_NAME} = "${KERNEL_PACKAGE_NAME}-base (= ${EXTENDPKGV})"
-# Allow machines to override this dependency if kernel image files are
-# not wanted in images as standard
-RRECOMMENDS:${KERNEL_PACKAGE_NAME}-base ?= "${KERNEL_PACKAGE_NAME}-image (= ${EXTENDPKGV})"
-PKG:${KERNEL_PACKAGE_NAME}-image = "${KERNEL_PACKAGE_NAME}-image-${@legitimize_package_name(d.getVar('KERNEL_VERSION'))}"
-RPROVIDES:${KERNEL_PACKAGE_NAME}-image += "${KERNEL_PACKAGE_NAME}-image"
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image += "${@oe.utils.conditional('KERNEL_IMAGETYPE', 'vmlinux', '${KERNEL_PACKAGE_NAME}-vmlinux (= ${EXTENDPKGV})', '', d)}"
-PKG:${KERNEL_PACKAGE_NAME}-base = "${KERNEL_PACKAGE_NAME}-${@legitimize_package_name(d.getVar('KERNEL_VERSION'))}"
-RPROVIDES:${KERNEL_PACKAGE_NAME}-base += "${KERNEL_PACKAGE_NAME}-${KERNEL_VERSION} ${KERNEL_PACKAGE_NAME}-base"
-ALLOW_EMPTY:${KERNEL_PACKAGE_NAME} = "1"
-ALLOW_EMPTY:${KERNEL_PACKAGE_NAME}-base = "1"
-ALLOW_EMPTY:${KERNEL_PACKAGE_NAME}-image = "1"
-ALLOW_EMPTY:${KERNEL_PACKAGE_NAME}-modules = "1"
-DESCRIPTION:${KERNEL_PACKAGE_NAME}-modules = "Kernel modules meta package"
 
 pkg_postinst:${KERNEL_PACKAGE_NAME}-base () {
 	if [ ! -e "$D/lib/modules/${KERNEL_VERSION}" ]; then
